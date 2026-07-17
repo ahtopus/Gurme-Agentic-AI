@@ -214,6 +214,26 @@ def check_guardrails(text: str):
         if re.search(kalip, text_lower):
             return False, "🚨 Güvenlik İhlali: Sistem manipülasyonu (Prompt Injection) veya zararlı sorgu tespiti."
             
+    # 3. Kod Enjeksiyonu ve Komut İnfazı Filtresi (Python/Shell/JS vb.)
+    kod_kaliplari = [
+        r"print\s*\(",
+        r"exec\s*\(",
+        r"eval\s*\(",
+        r"import\s+[a-zA-Z_]",
+        r"from\s+[a-zA-Z_].*import",
+        r"os\.system",
+        r"subprocess\.",
+        r"__import__",
+        r"def\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(",
+        r"sys\.exit",
+        r"open\s*\(",
+        r"write\s*\(",
+        r"read\s*\("
+    ]
+    for kalip in kod_kaliplari:
+        if re.search(kalip, text_lower) or re.search(kalip, text):
+            return False, "🚨 Güvenlik İhlali: Kod veya programlama komutu çalıştırma denemesi (Code Injection) tespit edildi."
+
     return True, ""
 
 # --- 3. CACHED INITIALIZATION FOR SPEED ---
