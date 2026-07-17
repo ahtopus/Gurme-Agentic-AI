@@ -22,6 +22,7 @@ Proje, kullanıcılara yemek tarifleri sunan, mutfakla ilgili soruları cevaplay
 4. **Şeffaf ve Kalıcı Düşünme Süreci (Agent Transparency):** Ajanın arka planda hangi araçları kullanmaya karar verdiği, bu araçlara hangi argümanları gönderdiği ve araçlardan dönen sonuçlar Streamlit arayüzünde detaylı olarak gösterilir. Bu düşünce süreci ("Şefin Düşünce Süreci") sohbet geçmişinde kalıcı olarak kaydedilir; böylece kullanıcı dilediği zaman bu adımları açıp inceleyebilir.
 5. **Gelişmiş Yan Panel (Sidebar):** Sol panelde teknik detaylar (veritabanı yenileme vb.) "Geliştirici Ayarları" menüsü altına gizlenmiş, bunun yerine kullanıcıya "Sürpriz Tarif Öner", "15 Dakikalık Yemek" ve "Sağlıklı Diyet" gibi tek tıkla çalıştırılabilen faydalı Hızlı Asistan butonları eklenmiştir.
 6. **Güvenlik Kalkanı (Guardrail):** Siber saldırılara (Prompt Injection, SQL Injection) ve toksik/argo kullanıma karşı özel bir Python kalkanı geliştirilmiştir. Yasaklı ifadeler LLM'e ulaşmadan arayüzde yakalanıp engellenir.
+7. **Dış Dünya Etkileşimi (MCP Entegrasyonu):** Ajan, Model Context Protocol (MCP) kullanarak bilgisayarın yerel dosya sistemine (Filesystem) tam erişim sağlar. Kullanıcı sormasa bile kendi inisiyatifiyle dosyalar okuyabilir, notlar alabilir ve log kayıtları tutabilir.
 
 ## Ajanın Sahip Olduğu Araçlar (Tools)
 Ajan, soruları yanıtlarken ihtiyacına göre kendi kararıyla aşağıdaki fonksiyonlara ve araçlara başvurabilir:
@@ -36,6 +37,16 @@ Ajan, soruları yanıtlarken ihtiyacına göre kendi kararıyla aşağıdaki fon
 8. 🧊 **Dolap Hafızası (`dolaba_ekle` & `dolaptan_cikar`):** Kullanıcının mutfağındaki malzemeleri `dolap_envanteri.json` dosyasına kaydederek kalıcı bir hafıza oluşturur. Tarif üretirken bu envanteri baz alır.
 9. 🛒 **Alışveriş Listesi (`alisveris_listesi_olustur`):** Kullanıcının evinde olmayan eksik malzemeler için reyonlara/kategorilere (Manav, Kasap vb.) ayrılmış şık bir Markdown tablosu üretir. Ayrıca eksik malzemeleri `.env` ayarlarında belirtilen kullanıcı e-posta adresine **otomatik olarak mail atar**.
 10. 🍷 **İçecek Eşleştirme (`icecek_eslestir`):** Önerilen yemeğin lezzet profiline, asiditesine veya ağırlığına göre en uygun eşlikçi içeceği (şarap, ev yapımı kokteyl vb.) seçer ve "Tarifini istersen verebilirim" diyerek kullanıcıyı yönlendirir.
+11. 📂 **Dosya Yönetimi ve Otonom Kayıt (MCP):** Ajan, Filesystem MCP aracı sayesinde kendi kararıyla dosyalar oluşturabilir ve düzenleyebilir. Hangi malzemenin ne kadar kullanıldığını `malzeme_kullanimi.txt` dosyasına kaydeder, internetten bulduğu tarifleri `yeni_tarifler.txt`'ye yedekler, yenen yemekleri `yemek_gecmisi.txt`'de gün gün loglar ve aynı yemeğin kaç kez pişirildiğini `pisirme_sayaci.json` dosyasında takip eder.
+
+## Son Geliştirmeler ve Optimizasyonlar (Yeni)
+Yakın zamanda web arayüzü ve ajan davranışları üzerinde yapılan kritik güncellemeler:
+
+1. **📂 Canlı MCP Dosya Takibi (UI Sekmesi):** Streamlit web arayüzüne eklenen "📂 MCP Dosyaları" sekmesi sayesinde kullanıcılar, ajanın arka planda otonom olarak yönettiği 4 temel txt/json dosyasının içeriklerini canlı olarak web arayüzünden takip edebilir.
+2. **📈 Kümülatif Geçmiş Kaydı (Append Mantığı):** Ajanın dosya yazarken eski verileri silmesinin önüne geçilmiştir. Ajan artık bir dosyaya yazmadan önce `read_file` ile dosyayı okur, yeni satırları eskisinin sonuna ekler (append) ve tümünü birleştirerek `write_file` ile kaydeder.
+3. **⚡ recursion_limit Optimizasyonu:** Ajanın tek bir girdide çok sayıda aracı (web arama, kalori, sağlık, 4 dosya için okuma-yazma) çağırarak döngü sınırını aşmasını engellemek için LangGraph/LangChain `recursion_limit` değeri 25'ten **100'e** yükseltilmiştir. Bu sayede TaskGroup çökme hataları çözülmüştür.
+4. **💬 Takipli Soru Butonları (XML Fix):** XML etiketlerindeki regex ayrıştırma hatası giderilerek takipli soruların (follow-up) UI'da şık butonlar halinde görüntülenmesi sağlanmıştır.
 
 ---
 *Not: Bu rapor, projeye eklenen yeni özelliklerle birlikte otomatik olarak güncellenecektir.*
+
