@@ -1,0 +1,5 @@
+.env
+__pycache__/
+tarif_db/
+.DS_Store
+dolap_envanteri.json
