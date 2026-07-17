@@ -321,10 +321,10 @@ Bu soruları KESİNLİKLE aşağıdaki XML formatında, metnin EN SONUNA ekle:
 12. MCP İLE OTOMATİK KAYIT VE TAKİP: Sana sağlanan MCP dosya sistemi araçlarını KESİNLİKLE kullan!
 ÖNEMLİ KURAL: txt dosyalarına kayıt yaparken ASLA eski içeriği silme! Önce dosyayı `read_file` ile oku, eski metnin GÜNCEL SONUNA yeni satırları ekle ve birleşmiş uzun metni `write_file` ile kaydet.
 Bu 4 dosyayı şu kurallara göre KESİNLİKLE GÜNCELLE:
-- MALZEME KULLANIMI: Tarifte kullanılan HER BİR MALZEMEYİ ve MİKTARINI (kg, adet, gram vb.) alt alta `/Users/yusufbb/Desktop/proje/malzeme_kullanimi.txt` dosyasına ekle. (Sadece yemeğin adını yazıp GEÇME! Hangi malzemeden ne kadar kullanıldıysa tek tek yaz.)
-- YENİ TARİFLER: İnternetten bulduğun tarifi KISA KESMEDEN, MALZEMELERİ VE YAPILIŞIYLA BİRLİKTE TAM METİN OLARAK `/Users/yusufbb/Desktop/proje/yeni_tarifler.txt` dosyasına ekle. (Sadece "tarifi eklendi" YAZMA!)
-- YEMEK GEÇMİŞİ: Yemeğin adını ve tarihini `/Users/yusufbb/Desktop/proje/yemek_gecmisi.txt` dosyasına ekle. (Örn: "2026-07-17: Mochi tatlısı")
-- PİŞİRME SAYACI: `/Users/yusufbb/Desktop/proje/pisirme_sayaci.json` dosyasını json olarak oku, verdiğin yemeğin adını bulup sayısını 1 artır ve tekrar kaydet.
+- MALZEME KULLANIMI: Tarifte kullanılan HER BİR MALZEMEYİ ve MİKTARINI (kg, adet, gram vb.) alt alta `/Users/yusufbb/Desktop/proje/kayitlar/malzeme_kullanimi.txt` dosyasına ekle. (Sadece yemeğin adını yazıp GEÇME! Hangi malzemeden ne kadar kullanıldıysa tek tek yaz.)
+- YENİ TARİFLER: İnternetten bulduğun tarifi KISA KESMEDEN, MALZEMELERİ VE YAPILIŞIYLA BİRLİKTE TAM METİN OLARAK `/Users/yusufbb/Desktop/proje/tarifler/yeni_tarifler.txt` dosyasına ekle. (Sadece "tarifi eklendi" YAZMA!)
+- YEMEK GEÇMİŞİ: Yemeğin adını ve tarihini `/Users/yusufbb/Desktop/proje/kayitlar/yemek_gecmisi.txt` dosyasına ekle. (Örn: "2026-07-17: Mochi tatlısı")
+- PİŞİRME SAYACI: `/Users/yusufbb/Desktop/proje/kayitlar/pisirme_sayaci.json` dosyasını json olarak oku, verdiğin yemeğin adını bulup sayısını 1 artır ve tekrar kaydet.
 ÖNEMLİ: Araçları (write_file vb.) KESİNLİKLE çalıştır.
 """
 
@@ -581,15 +581,20 @@ ui_tabs = st.tabs(["💬 Ajan ile Sohbet", "📂 MCP Dosyaları"])
 with ui_tabs[1]:
     st.markdown("### Ajanın Otonom Olarak Yönettiği Dosyalar")
     st.info("Bu dosyalar ajan tarafından arka planda MCP (Model Context Protocol) dosya sistemi araçları kullanılarak otomatik olarak oluşturulur ve güncellenir.")
-    mcp_files = ["yemek_gecmisi.txt", "malzeme_kullanimi.txt", "pisirme_sayaci.json", "yeni_tarifler.txt"]
-    for f in mcp_files:
-        path = os.path.join("/Users/yusufbb/Desktop/proje", f)
+    mcp_files = {
+        "yemek_gecmisi.txt": "kayitlar/yemek_gecmisi.txt",
+        "malzeme_kullanimi.txt": "kayitlar/malzeme_kullanimi.txt",
+        "pisirme_sayaci.json": "kayitlar/pisirme_sayaci.json",
+        "yeni_tarifler.txt": "tarifler/yeni_tarifler.txt"
+    }
+    for label, rel_path in mcp_files.items():
+        path = os.path.join("/Users/yusufbb/Desktop/proje", rel_path)
         if os.path.exists(path):
-            with st.expander(f"📄 {f}"):
+            with st.expander(f"📄 {label} (Yol: `{rel_path}`)"):
                 with open(path, "r", encoding="utf-8") as file:
                     st.text(file.read())
         else:
-            st.warning(f"📄 {f} henüz ajan tarafından oluşturulmadı.")
+            st.warning(f"📄 {label} henüz `{rel_path}` konumunda oluşturulmadı.")
 
 with ui_tabs[0]:
     if vector_db is None:

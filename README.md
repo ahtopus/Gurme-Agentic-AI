@@ -11,7 +11,8 @@ Proje, kullanıcılara yemek tarifleri sunan, mutfakla ilgili soruları cevaplay
 - **Vektör Veritabanı:** Chroma.
 
 ## Dosya Yapısı ve Bileşenler
-- `tarifler/tarifler.txt`: Sistemin RAG yeteneği için kullanılan yerel tarif dokümanları.
+- `tarifler/`: Sistemin RAG yeteneği için kullanılan yerel tarif dokümanları. Ajanın otonom olarak kaydettiği `yeni_tarifler.txt` dosyası da bu klasörde saklanır (böylece veri tabanı güncellendiğinde yeni tarifler RAG sistemine dahil olur).
+- `kayitlar/`: Ajanın otonom MCP araçlarıyla tuttuğu günlük mutfak kayıtları (`yemek_gecmisi.txt`, `malzeme_kullanimi.txt`, `pisirme_sayaci.json`).
 - `gurme_rag_bot.py`: Projenin komut satırında (terminal) çalışan interaktif versiyonu.
 - `gurme_rag_ui.py`: Projenin Streamlit kütüphanesi ile yazılmış olan, modern ve kullanıcı dostu web arayüzü (UI) versiyonu.
 
@@ -37,7 +38,7 @@ Ajan, soruları yanıtlarken ihtiyacına göre kendi kararıyla aşağıdaki fon
 8. 🧊 **Dolap Hafızası (`dolaba_ekle` & `dolaptan_cikar`):** Kullanıcının mutfağındaki malzemeleri `dolap_envanteri.json` dosyasına kaydederek kalıcı bir hafıza oluşturur. Tarif üretirken bu envanteri baz alır.
 9. 🛒 **Alışveriş Listesi (`alisveris_listesi_olustur`):** Kullanıcının evinde olmayan eksik malzemeler için reyonlara/kategorilere (Manav, Kasap vb.) ayrılmış şık bir Markdown tablosu üretir. Ayrıca eksik malzemeleri `.env` ayarlarında belirtilen kullanıcı e-posta adresine **otomatik olarak mail atar**.
 10. 🍷 **İçecek Eşleştirme (`icecek_eslestir`):** Önerilen yemeğin lezzet profiline, asiditesine veya ağırlığına göre en uygun eşlikçi içeceği (şarap, ev yapımı kokteyl vb.) seçer ve "Tarifini istersen verebilirim" diyerek kullanıcıyı yönlendirir.
-11. 📂 **Dosya Yönetimi ve Otonom Kayıt (MCP):** Ajan, Filesystem MCP aracı sayesinde kendi kararıyla dosyalar oluşturabilir ve düzenleyebilir. Hangi malzemenin ne kadar kullanıldığını `malzeme_kullanimi.txt` dosyasına kaydeder, internetten bulduğu tarifleri `yeni_tarifler.txt`'ye yedekler, yenen yemekleri `yemek_gecmisi.txt`'de gün gün loglar ve aynı yemeğin kaç kez pişirildiğini `pisirme_sayaci.json` dosyasında takip eder.
+11. 📂 **Dosya Yönetimi ve Otonom Kayıt (MCP):** Ajan, Filesystem MCP aracı sayesinde kendi kararıyla dosyalar oluşturabilir ve düzenleyebilir. Hangi malzemenin ne kadar kullanıldığını `kayitlar/malzeme_kullanimi.txt` dosyasına kaydeder, internetten bulduğu tarifleri `tarifler/yeni_tarifler.txt`'ye yedekler, yenen yemekleri `kayitlar/yemek_gecmisi.txt`'de gün gün loglar ve aynı yemeğin kaç kez pişirildiğini `kayitlar/pisirme_sayaci.json` dosyasında takip eder.
 
 ## Son Geliştirmeler ve Optimizasyonlar (Yeni)
 Yakın zamanda web arayüzü ve ajan davranışları üzerinde yapılan kritik güncellemeler:
